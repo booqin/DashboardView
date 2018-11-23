@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DashboardView4 mDashboardView4;
 
     private boolean isAnimFinished = true;
+    private QtsDashboardView mDashboardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDashboardView2 = (DashboardView2) findViewById(R.id.dashboard_view_2);
         mDashboardView3 = (DashboardView3) findViewById(R.id.dashboard_view_3);
         mDashboardView4 = (DashboardView4) findViewById(R.id.dashboard_view_4);
+        mDashboardView = (QtsDashboardView) findViewById(R.id.dashboard_view_5);
 
         mDashboardView1.setOnClickListener(this);
         mDashboardView2.setOnClickListener(this);
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDashboardView4.setOnClickListener(this);
 
         mDashboardView2.setCreditValueWithAnim(new Random().nextInt(600) + 350);
+        mDashboardView.setCreditValueWithAnim(80);
     }
 
     @Override
@@ -56,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.dashboard_view_3:
                 mDashboardView3.setCreditValue(new Random().nextInt(950 - 350) + 350);
+
+                break;
+            case R.id.dashboard_view_5:
+                mDashboardView.setCreditValueWithAnim(new Random().nextInt(100));
 
                 break;
             case R.id.dashboard_view_4:

@@ -1,5 +1,6 @@
 package com.xw.sample.dashboardviewdemo;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -12,6 +13,8 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
 
 /**
  * 信用分刻度表
@@ -35,7 +38,7 @@ public class QtsDashboardView extends View {
     private int mColorEnd;
 
     /** 信用分 */
-    private int mPoint;
+    private int mCreditValue;
     private int mLightCount;
 
     public QtsDashboardView(Context context) {
@@ -63,9 +66,9 @@ public class QtsDashboardView extends View {
         mColorStart = getResources().getColor(R.color.color_g_s);
         mColorEnd = getResources().getColor(R.color.color_g_e);
 
-        mPoint = 80;
+        mCreditValue = 0;
 
-        mLightCount = mPoint*DOT_MAX_COUNT/MAX_POINT;
+        mLightCount = 0;
     }
 
     /**
@@ -107,13 +110,13 @@ public class QtsDashboardView extends View {
         //刻度点
         mPaint.reset();
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(getResources().getColor(R.color.color_g_e));
+        mPaint.setColor(mLightCount==0?Color.GRAY:getResources().getColor(R.color.color_g_e));
         canvas.save();
         canvas.drawCircle(mCenterX, 0+dp2px(5), dp2px(4), mPaint);
         int degrees = 360/DOT_MAX_COUNT;
         for (int i=0; i<DOT_MAX_COUNT-1; i++){
             canvas.rotate(degrees, mCenterX, mCenterY);
-            mPaint.setColor(i>mLightCount?Color.GRAY:getResources().getColor(R.color.color_g_e));
+            mPaint.setColor(i>=mLightCount?Color.GRAY:getResources().getColor(R.color.color_g_e));
             canvas.drawCircle(mCenterX, 0+dp2px(5), dp2px(4), mPaint);
         }
         canvas.restore();
@@ -128,7 +131,7 @@ public class QtsDashboardView extends View {
 
 
         mPaint.setTextSize(sp2px(48));
-        canvas.drawText(String.valueOf(mPoint), mCenterX, mCenterY + dp2px(5), mPaint);
+        canvas.drawText(String.valueOf(mCreditValue), mCenterX, mCenterY + dp2px(5), mPaint);
 
         mPaint.setTextSize(sp2px(10));
         canvas.drawText("信用评级", mCenterX, mCenterY+dp2px(15)+sp2px(10), mPaint);
@@ -137,18 +140,35 @@ public class QtsDashboardView extends View {
         canvas.drawText(calculateCreditDescription(), mCenterX, mCenterY+dp2px(20)+sp2px(10)+sp2px(14), mPaint);
     }
 
+    public void setCreditValueWithAnim(int value) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, value);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                mCreditValue = value;
+                mLightCount = mCreditValue *DOT_MAX_COUNT/MAX_POINT;
+                postInvalidate();
+            }
+        });
+
+        valueAnimator.setDuration(2000);
+        valueAnimator.setInterpolator(new AccelerateInterpolator());
+        valueAnimator.start();
+
+    }
 
     /**
      * 信用分对应信用描述
      */
     private String calculateCreditDescription() {
-        if (mPoint >= 90) {
+        if (mCreditValue >= 90) {
             return "信用极好";
-        } else if (mPoint >= 80) {
+        } else if (mCreditValue >= 80) {
             return "信用优秀";
-        } else if (mPoint >= 70) {
+        } else if (mCreditValue >= 70) {
             return "信用良好";
-        } else if (mPoint >= 60) {
+        } else if (mCreditValue >= 60) {
             return "信用中等";
         }
         return "信用较差";
