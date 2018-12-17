@@ -5,8 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +26,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isAnimFinished = true;
     private QtsDashboardView mDashboardView;
+
+//    private BottomSheetDialog mSheetDialog;
+    private BottomSheetDialogFragment mDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mDashboardView2.setCreditValueWithAnim(new Random().nextInt(600) + 350);
         mDashboardView.setCreditValueWithAnim(80);
+
+//        mSheetDialog = new BottomSheetDialog(this);
+//        mSheetDialog.setContentView(R.layout.sheet_layout);
+//        mSheetDialog.setCancelable(true);
+
+        mDialogFragment = new MyBottomSheetDialogFragment();
     }
 
     @Override
@@ -54,8 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.dashboard_view_2:
-                mDashboardView2.setCreditValueWithAnim(new Random().nextInt(950 - 350) + 350);
-
+//                mDashboardView2.setCreditValueWithAnim(new Random().nextInt(950 - 350) + 350);
+                mDialogFragment.show(getSupportFragmentManager(), MyBottomSheetDialogFragment.class.getSimpleName());
                 break;
             case R.id.dashboard_view_3:
                 mDashboardView3.setCreditValue(new Random().nextInt(950 - 350) + 350);
